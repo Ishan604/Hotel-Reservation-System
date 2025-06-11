@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
     <!-- Room 2 -->
     <div class="room-card">
-      <img src="img/rooms/room-2.jpg" alt="Room Image" />
+      <img src="img/rooms/room-3.jpg" alt="Room Image" />
       <div class="room-info">
         <a href="room_page.php" style="text-decoration: none;">
           <h3>Deluxe Beach Suite</h3>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Holiday Rentals | The Crown Stays</title>
+  <link rel="stylesheet" href="Style_files/booking_page_style.css" />
+  </head>
+<body>
+  <header class="hero-section">
+    <div class="navbar">
+      <div class="container nav-container">
+        <div class="logo">
+          <span>The</span><span class="highlight">Crown</span><span>Stays</span>
+        </div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Services</a></li>
+          <li><a href="#">Apartment Room</a></li>
+          <li><a href="#">Sign In</a></li>
+          <li><a href="#">Log In</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="hero-content">
+      <h1>Holiday rentals all over the world</h1>
+      <p>Houses, cabins, apartments and more</p>
+    </div>
+  </header>
+
+  <section class="main-booking-section container">
+    <form id="bookingForm" class="main-booking-form" action="room_page.php" method="POST">
+      <div class="input-group location-input">
+        <img src="img/icons/bed.png" alt="Location Icon" class="input-icon" />
+        <input type="text" name="location" placeholder="Location" value="Galle" required />
+        <span class="clear-input">✖</span>
+      </div>
+      
+      <div class="input-group date-input">
+        <img src="img/icons/calender.png" alt="Calendar Icon" class="input-icon" />
+        <input type="date" name="checkIn" value="2025-04-05" required />
+        <span>—</span>
+        <input type="date" name="checkOut" value="2025-04-12" required />
+      </div>
+  
+      <!-- Separate Dropdown for Adults -->
+      <div class="input-group guests-input">
+        <img src="img/icons/user.png" alt="Person Icon" class="input-icon" />
+        <select name="adults" required>
+          <option value="1">Adult 1</option>
+          <option value="2">Adult 2</option>
+          <option value="3">Adult 3</option>
+          <option value="4">Adult 4</option>
+          <option value="5">Adult 5</option>
+        </select>
+      </div>
+  
+      <!-- Separate Dropdown for Children -->
+      <div class="input-group guests-input">
+        <img src="img/icons/user.png" alt="Person Icon" class="input-icon" />
+        <select name="children" required>
+          <option value="0">Children 0</option>
+          <option value="1">Children 1</option>
+          <option value="2">Children 2</option>
+          <option value="3">Children 3</option>
+          <option value="4">Children 4</option>
+        </select>
+      </div>
+  
+      <!-- Separate Dropdown for Rooms -->
+      <div class="input-group guests-input">
+        <img src="img/icons/dropdown.png" alt="Dropdown Arrow" class="input-icon" />
+        <select name="rooms" required>
+          <option value="1">1 Room</option>
+          <option value="2">2 Rooms</option>
+          <option value="3">3 Rooms</option>
+          <option value="4">4 Rooms</option>
+        </select>
+      </div>
+  
+      <button type="submit" class="btn search-btn" name="search">Search</button>
+    </form>
+  </section>  
+
+  <section class="apartment-room container">
+    <h2>Available Rooms</h2>
+    <div class="room-slider">
+      <div class="room-cards">
+        <!-- Standard Room -->
+        <a href="room-details.html?room=1" class="room-card" style="color: inherit; text-decoration: none;">
+          <img src="img/rooms/room1.jpg" alt="Room Image" />
+          <div class="room-info">
+            <div class="stars">★★★★★</div>
+            <h3>Standard Room</h3>
+            <p><strong>Max:</strong> 2 Persons</p>
+            <p><strong>Size:</strong> 30 m²</p>
+            <p><strong>View:</strong> Garden View</p>
+            <p><strong>Bed:</strong> 1 Single large bed</p>
+          </div>
+        </a>
+        <!-- Suite Room -->
+        <a href="room-details.html?room=2" class="room-card" style="color: inherit; text-decoration: none;">
+          <img src="img/rooms/room4.jpg" alt="Room Image" />
+          <div class="room-info">
+            <div class="stars">★★★★★</div>
+            <h3>Suite Room</h3>
+            <p><strong>Max:</strong> 4 Persons</p>
+            <p><strong>Size:</strong> 60 m²</p>
+            <p><strong>View:</strong> Sea View</p>
+            <p><strong>Bed:</strong> 1 Single large bed</p>
+          </div>
+        </a>
+        <!-- Deluxe Room -->
+        <a href="room-details.html?room=3" class="room-card" style="color: inherit; text-decoration: none;">
+          <img src="img/rooms/room5.jpg" alt="Room Image" />
+          <div class="room-info">
+            <div class="stars">★★★★★</div>
+            <h3>Deluxe Room</h3>
+            <p><strong>Max:</strong> 3 Persons</p>
+            <p><strong>Size:</strong> 50 m²</p>
+            <p><strong>View:</strong> City View</p>
+            <p><strong>Bed:</strong> 2 Single beds</p>
+          </div>
+        </a>
+        <!-- Another Deluxe Room -->
+        <a href="room-details.html?room=4" class="room-card" style="color: inherit; text-decoration: none;">
+          <img src="img/rooms/room-3.jpg" alt="Room Image" />
+          <div class="room-info">
+            <div class="stars">★★★★★</div>
+            <h3>Deluxe Room</h3>
+            <p><strong>Max:</strong> 3 Persons</p>
+            <p><strong>Size:</strong> 50 m²</p>
+            <p><strong>View:</strong> City View</p>
+            <p><strong>Bed:</strong> 1 King</p>
+          </div>
+        </a>
+      </div>
+      <button class="prev-btn">❮</button>
+      <button class="next-btn">❯</button>
+    </div>
+  </section>
+      
+  <!-- Guest's Responses -->
+  <section class="happy-clients container">
+    <h2>What Our Guests Say</h2>
+    <div class="client-cards">
+      <div class="client-card">
+        <img src="img/avatar/avatar-1.jpg" alt="Client" />
+        <p>"Amazing stay! Clean rooms and great service."</p>
+        <h4>Dinuka Perera</h4>
+        <small>Traveler</small>
+      </div>
+      <div class="client-card">
+        <img src="img/avatar/avatar-2.jpg" alt="Client" />
+        <p>"Convenient location, helpful staff. Highly recommend."</p>
+        <h4>Sachini Fernando</h4>
+        <small>Tourist</small>
+      </div>
+      <div class="client-card">
+        <img src="img/avatar/avatar-1.jpg" alt="Client" />
+        <p>"Amazing stay! Clean rooms and great service."</p>
+        <h4>Dinuka Perera</h4>
+        <small>Traveler</small>
+      </div>
+      <div class="client-card">
+        <img src="img/avatar/avatar-1.jpg" alt="Client" />
+        <p>"Amazing stay! Clean rooms and great service."</p>
+        <h4>Dinuka Perera</h4>
+        <small>Traveler</small>
+      </div>
+      <div class="client-card">
+        <img src="img/avatar/avatar-1.jpg" alt="Client" />
+        <p>"Amazing stay! Clean rooms and great service."</p>
+        <h4>Dinuka Perera</h4>
+        <small>Traveler</small>
+      </div>
+      <div class="client-card">
+        <img src="img/avatar/avatar-1.jpg" alt="Client" />
+        <p>"Amazing stay! Clean rooms and great service."</p>
+        <h4>Dinuka Perera</h4>
+        <small>Traveler</small>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <h3>Vacation Rental</h3>
+        <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+        <a href="#" class="read-more">Read more &rarr;</a>
+      </div>
+      <div class="footer-col">
+        <h3>Services</h3>
+        <ul>
+          <li><a href="#">Map Direction</a></li>
+          <li><a href="#">Accommodation Services</a></li>
+          <li><a href="#">Great Experience</a></li>
+          <li><a href="#">Perfect central location</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Tag cloud</h3>
+        <div class="tag-cloud">
+          <span>APARTMENT</span><span>VACATION</span><span>RENTAL</span><span>HOUSE</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>Subscribe</h3>
+        <form class="subscribe-form">
+          <input type="email" placeholder="Enter email address" required />
+          <button type="submit" class="btn primary-btn subscribe-btn">&#9993;</button>
+        </form>
+        <div class="social-icons">
+          <a href="#"><img src="img/icons/twitter.png" alt="Twitter" /></a>
+          <a href="#"><img src="img/icons/fb.png" alt="Facebook" /></a>
+          <a href="#"><img src="img/icons/insta.png" alt="Instagram" /></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="booking.js"></script>
+</body>
+</html>

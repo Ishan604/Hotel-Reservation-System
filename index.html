@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Crown Stays - Home</title>
+  <link rel="stylesheet" href="Style_files/index_style.css" />
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <div class="logo">
+        <span>The</span><span class="highlight">Crown</span><span>Stays</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Apartment Room</a></li>
+        <li><a href="signin.php">Sign In</a></li>
+        <li><a href="reservation.php">Log In</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-container">
+      <div class="hero-text">
+        <small>Welcome to Vacation Rental</small>
+        <h1>Rent an appartment <br />for your vacation</h1>
+        <div class="hero-btns">
+          <button class="btn primary-btn">Learn More</button>
+          <button class="btn secondary-btn">Contact Us</button>
+        </div>
+      </div>
+      <div class="reservation-form-wrapper">
+        <form class="reservation-form" action="room_page.php" method="POST" id="reservationForm">
+          <h3>Book your apartment</h3>
+          <input type="text" name="location" placeholder="Location" required />
+          <div class="date-group">
+            <input type="date" name="checkIn" value="Check-In" required />
+            <input type="date" name="checkOut" value="Check-Out" required />
+          </div>
+          <div class="select-group">
+            <select name="adults" required>
+              <option value="" disabled selected>Adults</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4+</option>
+            </select>
+            <select name="children" required>
+              <option value="" disabled selected>Children</option>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2+</option>
+            </select>
+          </div>
+          <input type="tel" name="phone" placeholder="Phone number" required pattern="[0-9]{10,15}" />
+          <input type="time" name="time" placeholder="Time" required />
+          <button type="submit" class="btn primary-btn full-width-btn" name="book">Book Appartment Now</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features container">
+    <div class="feature-card">
+      <img src="img/features/about-p1.jpg" alt="Map Direction" />
+      <h4>Map Direction</h4>
+      <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
+      <button class="btn primary-btn small-btn">Read More</button>
+    </div>
+    <div class="feature-card">
+      <img src="img/features/about-p2.jpg" alt="Accommodation Services" />
+      <h4>Accomodation Services</h4>
+      <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
+      <button class="btn primary-btn small-btn">Read More</button>
+    </div>
+    <div class="feature-card">
+      <img src="img/features/about-p3.jpg" alt="Great Experience" />
+      <h4>Great Experience</h4>
+      <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
+      <button class="btn primary-btn small-btn">Read More</button>
+    </div>
+  </section>
+
+  <!-- Apartment Room Section -->
+  <section class="apartment-room container">
+    <h2>Apartment Room</h2>
+    <div class="room-cards">
+      <div class="room-card">
+        <img src="img/rooms/room-2.jpg" alt="Suite Room" />
+        <div class="room-info">
+          <div class="stars">★★★★★</div>
+          <h3>Suite Room</h3>
+          <p><strong>Max:</strong> 3 Persons</p>
+          <p><strong>Size:</strong> 45 m2</p>
+          <p><strong>View:</strong> Sea View</p>
+          <p><strong>Bed:</strong> 1</p>
+          <button class="btn secondary-btn small-btn">View Room Details</button>
+        </div>
+      </div>
+      <div class="room-card">
+        <img src="img/rooms/room-3.jpg" alt="Standard Room" />
+        <div class="room-info">
+          <div class="stars">★★★★★</div>
+          <h3>Standard Room</h3>
+          <p><strong>Max:</strong> 3 Persons</p>
+          <p><strong>Size:</strong> 45 m2</p>
+          <p><strong>View:</strong> Sea View</p>
+          <p><strong>Bed:</strong> 1</p>
+          <button class="btn secondary-btn small-btn">View Room Details</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Happy Clients Section -->
+  <section class="happy-clients container">
+    <h2>Happy Clients & Feedbacks</h2>
+    <div class="client-cards">
+      <div class="client-card">
+        <img src="img/avatar/avatar-1.jpg" alt="Mark Huff" />
+        <p>“Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.”</p>
+        <h4>Mark Huff</h4>
+        <small>Businesswoman</small>
+      </div>
+      <div class="client-card">
+        <img src="img/avatar/avatar-2.jpg" alt="Rodel Golez" />
+        <p>“Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.”</p>
+        <h4>Rodel Golez</h4>
+        <small>Businesswoman</small>
+      </div>
+      <div class="client-card">
+        <img src="img/avatar/avatar-3.jpg" alt="Ken Bosh" />
+        <p>“Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.”</p>
+        <h4>Ken Bosh</h4>
+        <small>Businesswoman</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- What We Offer Section -->
+  <section class="what-we-offer container">
+    <div class="offer-left">
+      <img src="img/side_image.jpg" alt="Family moving" />
+    </div>
+    <div class="offer-right">
+      <h2>What we offer</h2>
+      <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
+      <div class="offer-list">
+        <div class="offer-item">
+          <div class="icon tea"></div>
+          <div>
+            <h4>Tea Coffee</h4>
+            <p>A small river named Duden flows by their place and supplies it with the necessary</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="icon showers"></div>
+          <div>
+            <h4>Hot Showers</h4>
+            <p>A small river named Duden flows by their place and supplies it with the necessary</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="icon laundry"></div>
+          <div>
+            <h4>Laundry</h4>
+            <p>A small river named Duden flows by their place and supplies it with the necessary</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="icon air-conditioning"></div>
+          <div>
+            <h4>Air Conditioning</h4>
+            <p>A small river named Duden flows by their place and supplies it with the necessary</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="icon wifi"></div>
+          <div>
+            <h4>Free Wifi</h4>
+            <p>A small river named Duden flows by their place and supplies it with the necessary</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="icon kitchen"></div>
+          <div>
+            <h4>Kitchen</h4>
+            <p>A small river named Duden flows by their place and supplies it with the necessary</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="icon ironing"></div>
+          <div>
+            <h4>Ironing</h4>
+            <p>A small river named Duden flows by their place and supplies it with the necessary</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="icon lovers"></div>
+          <div>
+            <h4>Lovers</h4>
+            <p>A small river named Duden flows by their place and supplies it with the necessary</p>
+          </div>
+        </div>
+      </div>
+      <h3>The most recommended vacation rental</h3>
+      <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar.</p>
+    </div>
+  </section>
+
+  <!-- Ready to get started -->
+  <section class="ready-to-start">
+    <div class="container ready-container">
+      <h2>Ready to get started</h2>
+      <p>It’s safe to book online with us! Get your dream stay in clicks or drop us a line with your questions.</p>
+      <div class="btn-group">
+        <button 
+        onclick="window.location.href='booking.html'"
+        class="btn primary-btn">Book Now
+        </button>
+        <button class="btn secondary-btn">Contact Us</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Section -->
+  <section class="blog container">
+    <h2>Latest news from our blog</h2>
+    <small class="subtitle">NEWS & BLOG</small>
+    <div class="blog-cards">
+      <div class="blog-card">
+        <img src="img/blog-4.jpg" alt="Luxury Chalet in the Alps" />
+        <p>Work Hard, Party Hard in a Luxury Chalet in the Alps</p>
+      </div>
+      <div class="blog-card">
+        <img src="img/blog-8.jpg" alt="Luxury Chalet in the Alps" />
+        <p>Work Hard, Party Hard in a Luxury Chalet in the Alps</p>
+      </div>
+      <div class="blog-card">
+        <img src="img/blog-6.jpg" alt="Luxury Chalet in the Alps" />
+        <p>Work Hard, Party Hard in a Luxury Chalet in the Alps</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <h3>Vacation Rental</h3>
+        <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+        <a href="#" class="read-more">Read more &rarr;</a>
+      </div>
+      <div class="footer-col">
+        <h3>Services</h3>
+        <ul>
+          <li><a href="#">Map Direction</a></li>
+          <li><a href="#">Accomodation Services</a></li>
+          <li><a href="#">Great Experience</a></li>
+          <li><a href="#">Perfect central location</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Tag cloud</h3>
+        <div class="tag-cloud">
+          <span>APARTMENT</span>
+          <span>HOME</span>
+          <span>VACATION</span>
+          <span>RENTAL</span>
+          <span>RENT</span>
+          <span>HOUSE</span>
+          <span>PLACE</span>
+          <span>DRINKS</span>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>Subscribe</h3>
+        <form class="subscribe-form" action="#" method="POST">
+          <input type="email" placeholder="Enter email address" required />
+          <button type="submit" class="btn primary-btn subscribe-btn">&#9993;</button>
+        </form>
+        <div class="social-icons">
+          <a href="#"><img src="img/icons/twitter.png" alt="Twitter" /></a>
+          <a href="#"><img src="img/icons/fb.png" alt="Facebook" /></a>
+          <a href="#"><img src="img/icons/insta.png" alt="Instagram" /></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

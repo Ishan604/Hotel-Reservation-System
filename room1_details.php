@@ -1,7 +1,8 @@
 <?php
 session_start();
 
-if (isset($_SESSION['location'])) {
+if (isset($_SESSION['location'])) 
+{
     // Retrieve session data
     $location = $_SESSION['location'];
     $checkIn = $_SESSION['checkIn'];
@@ -11,18 +12,67 @@ if (isset($_SESSION['location'])) {
     $rooms = $_SESSION['rooms'];
 }
 
+// Database connection
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hotel_reservation_system";
+
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnreserve'])) 
 {
-    $_SESSION['Room_type'] = $_POST['roomtype'];
-    $_SESSION['Room_No'] = $_POST['roomno'];
-    $_SESSION['selectApartment'] = $_POST['selectApartment'];
+    $roomNo = $_POST['roomno'];
+    
+    // Check if room is available
+    $query = "SELECT is_available FROM rooms WHERE room_no = '$roomNo'";
+    $result = mysqli_query($conn, $query);
+    
+    if (mysqli_num_rows($result) > 0) 
+    {
+        $row = mysqli_fetch_assoc($result);
+        if ($row['is_available'] == 1) 
+        {
+            // Room is available, proceed with reservation
+            $_SESSION['Room_type'] = $_POST['roomtype'];
+            $_SESSION['Room_No'] = $roomNo;
+            $_SESSION['selectApartment'] = $_POST['selectApartment'];
 
-    $capcity = $adults + $children;
-    $_SESSION["capacity"] = $capcity;
-    header("Location: reservation.php");
-    exit();
-  
+            $capcity = $adults + $children;
+            $_SESSION["capacity"] = $capcity;
+            header("Location: reservation.php");
+            exit();
+        } 
+        else 
+        {
+            $error = "This room is already reserved. Please select another room.";
+        }
+    } 
+    else 
+    {
+        // Room not in database - treat as available
+        $_SESSION['Room_type'] = $_POST['roomtype'];
+        $_SESSION['Room_No'] = $roomNo;
+        $_SESSION['selectApartment'] = $_POST['selectApartment'];
+
+        $capcity = $adults + $children;
+        $_SESSION["capacity"] = $capcity;
+        header("Location: reservation.php");
+        exit();
+    }
+}
+
+// Get availability status for all rooms to display properly
+$roomAvailability = [];
+if ($conn) 
+{
+    $query = "SELECT room_no, is_available FROM rooms";
+    $result = mysqli_query($conn, $query);
+    while ($row = mysqli_fetch_assoc($result)) 
+    {
+        $roomAvailability[$row['room_no']] = $row['is_available'];
+    }
 }
 ?>
 
@@ -33,6 +83,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnreserve']))
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Room Search Results | The Crown Stays</title>
   <link rel="stylesheet" href="Style_files/room1_design.css">
+  <style>
+    .reserve-btn {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+    }
+    .reserve-btn:hover {
+      background-color: #0056b3;
+    }
+    .reserve-btn.disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .room-not-available {
+      color: red;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+  </style>
 </head>
 <body>
   <header class="hero-section">
@@ -46,8 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnreserve']))
           <li><a href="#">About</a></li>
           <li><a href="#">Services</a></li>
           <li><a href="#">Contact</a></li>
-          <li><a href="#">Sign In</a></li>
-          <li><a href="#">Log In</a></li>
+          <li><a href="signin.php">Sign In</a></li>
+          <li><a href="registration.php">Log In</a></li>
         </ul>
       </div>
     </div>
@@ -277,7 +348,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnreserve']))
     </table>
 
     <div class="reserve-section">
-      <button type="submit" class="btn reserve-btn" name="btnreserve" style="font-weight: bold;">I'll reserve</button>
+      <?php 
+      // Check if Room 01 exists in database and is reserved
+      if (isset($roomAvailability['Room 01']) && $roomAvailability['Room 01'] == 0): ?>
+        <button type="button" class="btn reserve-btn disabled" title="This room is already reserved" style="cursor: not-allowed;">I'll reserve</button>
+        <div class="room-not-available">This room is already reserved</div>
+      <?php else: ?>
+        <button type="submit" class="btn reserve-btn" name="btnreserve" style="font-weight: bold;">I'll reserve</button>
+      <?php endif; ?>
     </div>
   </form>
 
@@ -336,7 +414,80 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnreserve']))
     </table>
 
     <div class="reserve-section">
-      <button type="submit" class="btn reserve-btn" name="btnreserve" style="font-weight: bold;">I'll reserve</button>
+      <?php 
+      // Check if Room 02 exists in database and is reserved
+      if (isset($roomAvailability['Room 02']) && $roomAvailability['Room 02'] == 0): ?>
+        <button type="button" class="btn reserve-btn disabled" title="This room is already reserved" style="cursor: not-allowed;">I'll reserve</button>
+        <div class="room-not-available">This room is already reserved</div>
+      <?php else: ?>
+        <button type="submit" class="btn reserve-btn" name="btnreserve" style="font-weight: bold;">I'll reserve</button>
+      <?php endif; ?>
+    </div>
+  </form>
+
+  <!--Room 3-->
+  <form method="post" action="">
+    <table class="room-info-table">
+        <tr>
+          <td><strong>Apartment Type</strong></td>
+          <td>Apartment with Terrace</td>
+        </tr>
+        <tr>
+          <td><strong>Number of Guests</strong></td>
+          <td><?php echo $adults; ?> adults, <?php echo $children; ?> children</td>
+        </tr>
+        <tr>
+          <td><strong>Room Type</strong></td>
+          <td>
+            <input type="hidden" name="roomtype" value="2 Normal Beds">
+            2 Large Beds
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Room Number</strong></td>
+          <td>
+            <input type="hidden" name="roomno" value="Room 02">
+            Room 03
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Today's Price</strong></td>
+          <td>4000 LKR + 500 LKR taxes and fees</td>
+        </tr>
+        <tr>
+          <td><strong>Important Details</strong></td>
+          <td>
+            <ul>
+              <li><img src="img/icons/mark.png" alt="Check" /> Continental breakfast included</li>
+              <li><img src="img/icons/mark.png" alt="Check" /> Free cancellation before August 20, 2025</li>
+              <li><img src="img/icons/mark.png" alt="Check" /> No prepayment needed – pay at the property</li>
+              <li><img src="img/icons/mark.png" alt="Check" /> Credit card details needed
+                  <span style="color: red; padding-left: 10px; font-size:smaller">*or else the reservation will cancel at 7.00 P.M</span>
+              </li>
+              <li><img src="img/icons/mark.png" alt="Check" /> Genius discount may be available</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Select an Apartment</strong></td>
+          <td>
+            <select name="selectApartment" id="selectApartment">
+              <option value="0">0</option>
+              <option value="1">1</option>
+            </select>
+          </td>
+        </tr>
+    </table>
+
+    <div class="reserve-section">
+      <?php 
+      // Check if Room 03 exists in database and is reserved
+      if (isset($roomAvailability['Room 03']) && $roomAvailability['Room 03'] == 0): ?>
+        <button type="button" class="btn reserve-btn disabled" title="This room is already reserved" style="cursor: not-allowed;">I'll reserve</button>
+        <div class="room-not-available">This room is already reserved</div>
+      <?php else: ?>
+        <button type="submit" class="btn reserve-btn" name="btnreserve" style="font-weight: bold;">I'll reserve</button>
+      <?php endif; ?>
     </div>
   </form>
 

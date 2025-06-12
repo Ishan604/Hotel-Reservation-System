@@ -1,35 +1,30 @@
 <?php
 session_start();
 
-// Check if the location data exists in the session
-if (isset($_SESSION['location'])) 
-{
-    // Retrieve the location and guest details from the session
+if (isset($_SESSION['location'])) {
+    // Retrieve session data
     $location = $_SESSION['location'];
     $checkIn = $_SESSION['checkIn'];
     $checkOut = $_SESSION['checkOut'];
     $adults = isset($_SESSION['adults']) ? $_SESSION['adults'] : 0;
     $children = isset($_SESSION['children']) ? $_SESSION['children'] : 0;
     $rooms = $_SESSION['rooms'];
+}
 
-    // Set session variables only if POST data exists
-    if (isset($_POST["roomtype"])) 
-    {
-        $_SESSION["Room_type"] = $_POST["roomtype"];
-    }
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnreserve'])) 
+{
+    $_SESSION['Room_type'] = $_POST['roomtype'];
+    $_SESSION['Room_No'] = $_POST['roomno'];
+    $_SESSION['selectApartment'] = $_POST['selectApartment'];
 
-    if (isset($_POST["roomno"])) 
-    {
-        $_SESSION["Room_No"] = $_POST["roomno"];
-    }
-
-    // Calculate capacity and set session
-    $capacity = $adults + $children;
-    $_SESSION["capacity"] = $capacity;
-} 
+    $capcity = $adults + $children;
+    $_SESSION["capacity"] = $capcity;
+    header("Location: reservation.php");
+    exit();
+  
+}
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -225,7 +220,7 @@ if (isset($_SESSION['location']))
   </section>  
 
   <!-- Table for Apartment Information -->
-  <form method="post" action="reservation.php">
+  <form method="post" action="">
     <table class="room-info-table">
         <tr>
           <td><strong>Apartment Type</strong></td>
@@ -282,10 +277,12 @@ if (isset($_SESSION['location']))
     </table>
 
     <div class="reserve-section">
-      <button type="submit" class="btn reserve-btn" style="font-weight: bold;">I'll reserve</button>
+      <button type="submit" class="btn reserve-btn" name="btnreserve" style="font-weight: bold;">I'll reserve</button>
     </div>
+  </form>
 
-    <!--Room 2-->
+  <!--Room 2-->
+  <form method="post" action="">
     <table class="room-info-table">
         <tr>
           <td><strong>Apartment Type</strong></td>
@@ -298,14 +295,14 @@ if (isset($_SESSION['location']))
         <tr>
           <td><strong>Room Type</strong></td>
           <td>
-            <input type="hidden" name="roomtype" value="1 Single Large Bed">
+            <input type="hidden" name="roomtype" value="2 Normal Beds">
             2 Normal Beds
           </td>
         </tr>
         <tr>
           <td><strong>Room Number</strong></td>
           <td>
-            <input type="hidden" name="roomno" value="Room 01">
+            <input type="hidden" name="roomno" value="Room 02">
             Room 02
           </td>
         </tr>
@@ -339,7 +336,7 @@ if (isset($_SESSION['location']))
     </table>
 
     <div class="reserve-section">
-      <button type="submit" class="btn reserve-btn" style="font-weight: bold;">I'll reserve</button>
+      <button type="submit" class="btn reserve-btn" name="btnreserve" style="font-weight: bold;">I'll reserve</button>
     </div>
   </form>
 

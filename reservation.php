@@ -1,6 +1,15 @@
 <?php
 session_start();
 
+// Initialize all variables with default values
+$location = $checkIn = $checkOut = $roomtype = $roomno = $capacity = '';
+$adults = $children = $rooms = 0;
+$numNights = 0;
+$error_message = '';
+$success_message = '';
+$form_submitted = false;
+
+// Safely retrieve all session variables
 if (isset($_SESSION['location'])) 
 {
     $location = $_SESSION['location'];
@@ -9,28 +18,29 @@ if (isset($_SESSION['location']))
     $adults = $_SESSION['adults'];
     $children = $_SESSION['children'];
     $rooms = $_SESSION['rooms'];
+    $roomtype = $_SESSION['Room_type'];
+    $roomno = $_SESSION['Room_No'];
+    $capacity = $_SESSION['capacity'];
+    $_SESSION['roomName'] = $_SESSION['roomName'];
 }
 
 // Calculate total length of stay (number of nights)
-$numNights = 0;
 if (!empty($checkIn) && !empty($checkOut)) 
 {
-    $checkInDate = new DateTime($checkIn);
-    $checkOutDate = new DateTime($checkOut);
-    $interval = $checkInDate->diff($checkOutDate);
-    $numNights = $interval->days;
+    try 
+    {
+        $checkInDate = new DateTime($checkIn);
+        $checkOutDate = new DateTime($checkOut);
+        $interval = $checkInDate->diff($checkOutDate);
+        $numNights = $interval->days;
+    } 
+    catch (Exception $e) 
+    {
+        $error_message = "Invalid date format in session data";
+    }
 }
 
-// Safely read session variables into local vars
-$roomtype = isset($_SESSION["Room_type"]) ? $_SESSION["Room_type"] : null;
-$roomno = isset($_SESSION["Room_No"]) ? $_SESSION["Room_No"] : null;
-$capacity = isset($_SESSION["capacity"]) ? $_SESSION["capacity"] : null;
-
-// Dummy data (these should ideally come from user input or session)
-$_SESSION["roomName"] = "Princely House Apartment";      
-$roomAddress = "42, Humes Road, 80000 Galle, Sri Lanka";
-$roomRating = "9.1 Superb · 181 reviews"; 
-
+// Database connection and form handling
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -42,85 +52,129 @@ if (isset($_POST['reserve']))
 {
     if ($_SERVER["REQUEST_METHOD"] == "POST") 
     {
-        $email = $_POST['email'];
-        $firstName = $_POST['firstName'];
-        $lastName = $_POST['lastName'];
-        $occupants = $_POST['occupants'];
-        $phone = $_POST['phone'];
-        $country = $_POST['country'];
-
-        $is_available = 0; // mark reserved
-
-        if($conn)
+        if(true) 
         {
-            $check_email_query = "SELECT customer_id FROM customer WHERE email='$email'";
-            $result = mysqli_query($conn, $check_email_query);
-
-            if (mysqli_num_rows($result) > 0) 
+            // Validate required fields
+            $required = ['email', 'firstName', 'lastName', 'occupants', 'phone', 'country'];
+            foreach ($required as $field) 
             {
-                $user = mysqli_fetch_assoc($result);
-                $customer_id = $user['customer_id'];
-            } 
-            else 
-            {
-                $error_message = "Email not found! Please register first.";
+                if (empty($_POST[$field])) 
+                {
+                    $error_message = "Please fill in all required fields";
+                    break;
+                }
             }
 
-            if (isset($customer_id)) 
+            if (empty($error_message)) 
             {
-                // Insert reservation
-                $insert_reservation = "INSERT INTO reservations (customer_id, customer_email, check_in_date, check_out_date, occupants, status) 
-                                        VALUES ('$customer_id', '$email', '$checkIn', '$checkOut', '$occupants', 'pending')";
-                
-                if (mysqli_query($conn, $insert_reservation)) 
-                {
-                    $reservation_id = mysqli_insert_id($conn);
+                $email = $_POST['email'];
+                $firstName = $_POST['firstName'];
+                $lastName = $_POST['lastName'];
+                $occupants = $_POST['occupants'];
+                $phone = $_POST['phone'];
+                $country = $_POST['country'];
+                $is_available = 0; // mark reserved
 
-                    // Insert room details
-                    $insert_room = "INSERT INTO rooms (customer_id, room_no, room_type, is_available, capacity)
-                                    VALUES ('$customer_id', '$roomno', '$roomtype', '$is_available', '$capacity')";
-                    
-                    if (!mysqli_query($conn, $insert_room))
+                if ($conn) 
+                {
+                    $check_email_query = "SELECT customer_id FROM customer WHERE email='$email'";
+                    $result = mysqli_query($conn, $check_email_query);
+
+                    if (mysqli_num_rows($result) > 0) 
                     {
-                        echo "Error in inserting room details: " . mysqli_error($conn);
+                        $user = mysqli_fetch_assoc($result);
+                        $customer_id = $user['customer_id'];
+
+                        // Check if this customer already has a reservation for these dates
+                        $check_reservation = "SELECT reservation_id FROM reservations 
+                                            WHERE customer_id='$customer_id' 
+                                            AND check_in_date='$checkIn' 
+                                            AND check_out_date='$checkOut'";
+                        $res_result = mysqli_query($conn, $check_reservation);
+
+                        if (mysqli_num_rows($res_result) > 0) 
+                        {
+                            $error_message = "You already have a reservation for these dates.";
+                        } 
+                        else 
+                        {
+                            // Insert reservation
+                            $insert_reservation = "INSERT INTO reservations (customer_id, customer_email, check_in_date, check_out_date, occupants, status) 
+                                                VALUES ('$customer_id', '$email', '$checkIn', '$checkOut', '$occupants', 'pending')";
+                            
+                            if (mysqli_query($conn, $insert_reservation)) 
+                            {
+                                $reservation_id = mysqli_insert_id($conn);
+
+                                // Insert room details
+                                $insert_room = "INSERT INTO rooms (customer_id, room_no, room_type, is_available, capacity)
+                                                VALUES ('$customer_id', '$roomno', '$roomtype', '$is_available', '$capacity')";
+                                
+                                if (mysqli_query($conn, $insert_room)) 
+                                {
+                                    $success_message = "Reservation successful!";
+
+                                    // Insert credit card if provided
+                                    if (isset($_POST['add_credit_card']) && $_POST['add_credit_card'] === 'yes') 
+                                    {
+                                        $card_number = $_POST['card_number'];
+                                        $expiry = $_POST['expiry'];
+                                        $cvv = $_POST['cvv'];
+
+                                        if (!empty($card_number) && !empty($expiry) && !empty($cvv)) 
+                                        {
+                                            $insert_payment = "INSERT INTO credit_cards (customer_id, card_number, expiry, cvv) 
+                                                            VALUES ('$customer_id', '$card_number', '$expiry', '$cvv')";
+                                            
+                                            if (mysqli_query($conn, $insert_payment)) 
+                                            {
+                                                $update_status = "UPDATE reservations SET status='confirmed' WHERE reservation_id='$reservation_id'";
+                                                mysqli_query($conn, $update_status);
+                                            } 
+                                            else 
+                                            {
+                                                $error_message = "Error in inserting payment details: " . mysqli_error($conn);
+                                            }
+                                        }
+                                    }
+
+                                    // Clear POST data to prevent resubmission
+                                    $_POST = array();
+                                } 
+                                else 
+                                {
+                                    $error_message = "Error in inserting room details: " . mysqli_error($conn);
+                                }
+                            } 
+                            else 
+                            {
+                                $error_message = "Error in inserting reservation: " . mysqli_error($conn);
+                            }
+                        }
+                    } 
+                    else 
+                    {
+                        $error_message = "Email not found! Please register first.";
                     }
                 } 
                 else 
                 {
-                    echo "Error in inserting reservation: " . mysqli_error($conn);
-                }
-
-                // Insert credit card if provided
-                if (isset($_POST['add_credit_card']) && $_POST['add_credit_card'] === 'yes') 
-                {
-                    $card_number = $_POST['card_number'];
-                    $expiry = $_POST['expiry'];
-                    $cvv = $_POST['cvv'];
-
-                    $insert_payment = "INSERT INTO credit_cards (customer_id, card_number, expiry, cvv) 
-                                    VALUES ('$customer_id', '$card_number', '$expiry', '$cvv')";
-                    
-                    if (mysqli_query($conn, $insert_payment)) 
-                    {
-                        $update_status = "UPDATE reservations SET status='confirmed' WHERE reservation_id='$reservation_id'";
-                        mysqli_query($conn, $update_status);
-                    } 
-                    else 
-                    {
-                        echo "Error in inserting payment details: " . mysqli_error($conn);
-                    }
+                    $error_message = "Connection failed!";
                 }
             }
         }
-        else
-        {
-            $error_message = "Connection failed!";
-        }
     }
 }
+
+// Reset form submission flag when coming from another page
+if (!isset($_POST['reserve'])) {
+    $_SESSION['form_submitted'] = false;
+}
+
+// Set default room details if not in session
+$roomAddress = "42, Humes Road, 80000 Galle, Sri Lanka";
+$roomRating = "9.1 Superb · 181 reviews"; 
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -144,6 +198,14 @@ if (isset($_POST['reserve']))
             animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 3s;
         }
         
+        .success-notification {
+            background-color: #2ecc71;
+        }
+        
+        .error-notification {
+            background-color: #e74c3c;
+        }
+        
         @keyframes slideIn {
             from { transform: translateX(100%); }
             to { transform: translateX(0); }
@@ -153,17 +215,19 @@ if (isset($_POST['reserve']))
             from { opacity: 1; }
             to { opacity: 0; }
         }
-        
-        .error-notification {
-            background-color: #e74c3c;
-        }
     </style>
-    </head>
+</head>
 <body>
     
-    <?php if(isset($error_message)): ?>
+    <?php if(!empty($error_message)): ?>
         <div class="notification error-notification" id="errorNotification">
-            <?php echo $error_message; ?>
+            <?php echo htmlspecialchars($error_message); ?>
+        </div>
+    <?php endif; ?>
+    
+    <?php if(!empty($success_message)): ?>
+        <div class="notification success-notification" id="successNotification">
+            <?php echo htmlspecialchars($success_message); ?>
         </div>
     <?php endif; ?>
 
@@ -185,7 +249,7 @@ if (isset($_POST['reserve']))
                     <span class="star-icon" style="color: orange">★</span>
                     <span class="star-icon" style="color: orange">★</span>
                 </div>
-                <h2><?php echo htmlspecialchars($_SESSION["roomName"]); ?></h2>
+                <h2><?php echo htmlspecialchars($_SESSION['roomName']); ?></h2>
                 <p><?php echo htmlspecialchars($roomAddress); ?></p>
                 <div class="rating">
                     <span class="rating-score">9.1</span>
@@ -212,7 +276,7 @@ if (isset($_POST['reserve']))
                 </div>
                 <p class="total-length">Total length of stay: <strong><?php echo $numNights; ?> night<?php echo ($numNights > 1) ? 's' : ''; ?></strong></p>
                 <p class="selected-rooms">You selected <strong><?php echo htmlspecialchars($rooms); ?> room for <?php echo htmlspecialchars($adults); ?> adult<?php echo ($adults > 1) ? 's' : ''; ?></strong></p>
-                <a href="#" class="change-selection">Change your selection</a>
+                <a href="room1_details.php" class="change-selection">Change your selection</a>
             </section>
         </div>
 
@@ -226,7 +290,7 @@ if (isset($_POST['reserve']))
                 </div>
             </div>
 
-            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" class="reservation-form">
+            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" class="reservation-form">
                 <h3>Enter your details</h3>
                 <div class="message-box required-info">
                     Almost done! Just fill in the <span class="required-star">*</span> required info
@@ -235,37 +299,38 @@ if (isset($_POST['reserve']))
                 <div class="form-group-row">
                     <div class="form-group">
                         <label for="firstName">First name <span class="required-star">*</span></label>
-                        <input type="text" id="firstName" name="firstName" required>
+                        <input type="text" id="firstName" name="firstName" required value="<?php echo isset($_POST['firstName']) ? htmlspecialchars($_POST['firstName']) : ''; ?>">
                     </div>
                     <div class="form-group">
                         <label for="lastName">Last name <span class="required-star">*</span></label>
-                        <input type="text" id="lastName" name="lastName" required>
+                        <input type="text" id="lastName" name="lastName" required value="<?php echo isset($_POST['lastName']) ? htmlspecialchars($_POST['lastName']) : ''; ?>">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email address <span class="required-star">*</span></label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                     <small>Confirmation email goes to this address</small>
                 </div>
 
                 <div class="form-group">
                     <label for="occupants">Number of Occupants <span class="required-star">*</span></label>
-                    <input type="text" id="occupants" name="occupants" required>
+                    <input type="text" id="occupants" name="occupants" min="1" required value="<?php echo isset($_POST['occupants']) ? htmlspecialchars($_POST['occupants']) : ''; ?>">
                 </div>
 
                 <div class="form-group">
-                    <label for="occupants">Country/Region <span class="required-star">*</span></label>
-                    <select id="occupants" name="country" required>
-                        <option value="Sri Lanka" selected>Sri Lanka</option>
-                        </select>
+                    <label for="country">Country/Region <span class="required-star">*</span></label>
+                    <select id="country" name="country" required>
+                        <option value="Sri Lanka" <?php echo (isset($_POST['country']) && $_POST['country'] === 'Sri Lanka') ? 'selected' : ''; ?>>Sri Lanka</option>
+                        <!-- Add more countries as needed -->
+                    </select>
                 </div>
 
                 <div class="form-group">
                     <label for="phone">Phone number <span class="required-star">*</span></label>
                     <div class="phone-input-group">
                         <span class="phone-prefix">LK +94</span>
-                        <input type="tel" id="phone" name="phone" required>
+                        <input type="tel" id="phone" name="phone" required value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
                     </div>
                 </div>
 
@@ -276,7 +341,7 @@ if (isset($_POST['reserve']))
                         <label for="mainGuest">I am the main guest</label>
                     </div>
                     <div>
-                        <input type="radio" id="someoneElse" name="bookingFor" value="someoneElse">
+                        <input type="radio" id="someoneElse" name="bookingFor" value="someoneElse" <?php echo (isset($_POST['bookingFor']) && $_POST['bookingFor'] === 'someoneElse') ? 'checked' : ''; ?>>
                         <label for="someoneElse">Booking is for someone else</label>
                     </div>
                 </div>
@@ -284,7 +349,7 @@ if (isset($_POST['reserve']))
                 <div class="form-group radio-group">
                     <label>Are you travelling for work? (optional)</label>
                     <div>
-                        <input type="radio" id="travelWorkYes" name="travelWork" value="yes">
+                        <input type="radio" id="travelWorkYes" name="travelWork" value="yes" <?php echo (isset($_POST['travelWork']) && $_POST['travelWork'] === 'yes') ? 'checked' : ''; ?>>
                         <label for="travelWorkYes">Yes</label>
                     </div>
                     <div>
@@ -297,7 +362,7 @@ if (isset($_POST['reserve']))
                     <h3>Good to know:</h3>
                     <ul>
                         <li>Credit card details needed</li>
-                        <li>Stay flexible: You can cancel for free before <?php echo date('D M d Y', strtotime($checkIn)); ?> at 7.00 P.M</li>
+                        <li>Stay flexible: You can cancel for free before <?php echo !empty($checkIn) ? date('D M d Y', strtotime($checkIn)) : 'your check-in date'; ?> at 7.00 P.M</li>
                         <li>You'll get the entire apartment to yourself.</li>
                         <li>No payment needed today. You'll pay when you stay.</li>
                     </ul>
@@ -316,7 +381,9 @@ if (isset($_POST['reserve']))
                             $start = strtotime('12:30');
                             $end = strtotime('22:00');
                             while ($start <= $end) {
-                                echo '<option value="' . date('H:i', $start) . '">' . date('H:i', $start) . '</option>';
+                                $time = date('H:i', $start);
+                                $selected = (isset($_POST['arrivalTime']) && $_POST['arrivalTime'] === $time) ? 'selected' : '';
+                                echo '<option value="' . $time . '" ' . $selected . '>' . $time . '</option>';
                                 $start = strtotime('+30 minutes', $start);
                             }
                             ?>
@@ -346,8 +413,8 @@ if (isset($_POST['reserve']))
 
                 <section class="cancellation-policy">
                     <h3>How much will it cost to cancel?</h3>
-                    <p>Free cancellation before <?php echo date('D M d', strtotime($checkIn)); ?></p>
-                    <p>From 00:00 <?php echo date('D M d', strtotime($checkIn . ' + 1 day')); ?> <span class="cancellation-fee">2000 LKR</span></p>
+                    <p>Free cancellation before <?php echo !empty($checkIn) ? date('D M d', strtotime($checkIn)) : 'your check-in date'; ?></p>
+                    <p>From 00:00 <?php echo !empty($checkIn) ? date('D M d', strtotime($checkIn . ' + 1 day')) : 'the next day'; ?> <span class="cancellation-fee">2000 LKR</span></p>
                 </section>
 
                 <div class="limited-supply">
@@ -359,7 +426,7 @@ if (isset($_POST['reserve']))
                     <h3>Apartment with Terrace</h3>
                     <ul>
                         <li>Breakfast included in the price</li>
-                        <li>Free cancellation before <?php echo date('D M d Y', strtotime($checkIn)); ?></li>
+                        <li>Free cancellation before <?php echo !empty($checkIn) ? date('D M d Y', strtotime($checkIn)) : 'your check-in date'; ?></li>
                         <li>Guests: <?php echo htmlspecialchars($adults); ?> adult<?php echo ($adults > 1) ? 's' : ''; ?></li>
                         <li>Spotless apartment - 9.2</li>
                         <li>No smoking</li>
@@ -368,76 +435,76 @@ if (isset($_POST['reserve']))
 
                 <!-- Add Credit Card Details Section -->
                 <div class="form-group">
-                <label><span style="color: #cc0000;">*</span>Add Card Details?</label>
-                <div class="radio-group">
-                    <div>
-                    <input type="radio" id="cc_yes" name="add_credit_card" value="yes" />
-                    <label for="cc_yes">Yes</label>
+                    <label><span style="color: #cc0000;">*</span>Add Card Details?</label>
+                    <div class="radio-group">
+                        <div>
+                            <input type="radio" id="cc_yes" name="add_credit_card" value="yes" <?php echo (isset($_POST['add_credit_card']) && $_POST['add_credit_card'] === 'yes') ? 'checked' : ''; ?>/>
+                            <label for="cc_yes">Yes</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="cc_no" name="add_credit_card" value="no" <?php echo (isset($_POST['add_credit_card']) && $_POST['add_credit_card'] === 'no') ? 'checked' : ''; ?>/>
+                            <label for="cc_no">No</label>
+                        </div>
                     </div>
-                    <div>
-                    <input type="radio" id="cc_no" name="add_credit_card" value="no" />
-                    <label for="cc_no">No</label>
-                    </div>
-                </div>
                 </div>
 
                 <!-- Payment Access Form (Initially hidden) -->
                 <div id="payment-details" style="display:none; margin-top: 15px;">
-                <div class="form-group">
-                    <label for="card_number">Card Number</label>
-                    <input
-                    type="text"
-                    id="card_number"
-                    name="card_number"
-                    maxlength="19"
-                    placeholder="1234 5678 9012 3456"
-                    autocomplete="off"
-                    required
-                    />
-                </div>
-                <div class="form-group form-group-row">
-                    <div style="flex:1;">
-                    <label for="expiry">Expiry (MM/YY)</label>
-                    <input
-                        type="text"
-                        id="expiry"
-                        name="expiry"
-                        maxlength="5"
-                        placeholder="MM/YY"
-                        pattern="^(0[1-9]|1[0-2])\/\d{2}$"
-                        required
-                    />
+                    <div class="form-group">
+                        <label for="card_number">Card Number</label>
+                        <input
+                            type="text"
+                            id="card_number"
+                            name="card_number"
+                            maxlength="19"
+                            placeholder="1234 5678 9012 3456"
+                            autocomplete="off"
+                            value="<?php echo isset($_POST['card_number']) ? htmlspecialchars($_POST['card_number']) : ''; ?>"
+                        />
                     </div>
-                    <div style="flex:1;">
-                    <label for="cvv">CVV</label>
-                    <input
-                        type="password"
-                        id="cvv"
-                        name="cvv"
-                        maxlength="4"
-                        placeholder="123"
-                        autocomplete="off"
-                        required
-                    />
+                    <div class="form-group form-group-row">
+                        <div style="flex:1;">
+                            <label for="expiry">Expiry (MM/YY)</label>
+                            <input
+                                type="text"
+                                id="expiry"
+                                name="expiry"
+                                maxlength="5"
+                                placeholder="MM/YY"
+                                pattern="^(0[1-9]|1[0-2])\/\d{2}$"
+                                value="<?php echo isset($_POST['expiry']) ? htmlspecialchars($_POST['expiry']) : ''; ?>"
+                            />
+                        </div>
+                        <div style="flex:1;">
+                            <label for="cvv">CVV</label>
+                            <input
+                                type="password"
+                                id="cvv"
+                                name="cvv"
+                                maxlength="4"
+                                placeholder="123"
+                                autocomplete="off"
+                                value="<?php echo isset($_POST['cvv']) ? htmlspecialchars($_POST['cvv']) : ''; ?>"
+                            />
+                        </div>
                     </div>
-                </div>
                 </div>
 
                 <!-- Red Warning Message for No -->
                 <div
-                id="cancel-warning"
-                style="
-                    display: none;
-                    color: #cc0000;
-                    font-weight: bold;
-                    margin-top: 15px;
-                    border: 1px solid #cc0000;
-                    padding: 10px;
-                    border-radius: 5px;
-                    background-color: #ffebe6;
-                "
+                    id="cancel-warning"
+                    style="
+                        display: none;
+                        color: #cc0000;
+                        font-weight: bold;
+                        margin-top: 15px;
+                        border: 1px solid #cc0000;
+                        padding: 10px;
+                        border-radius: 5px;
+                        background-color: #ffebe6;
+                    "
                 >
-                The reservation will automatically cancel at 7.00 P.M.
+                    The reservation will automatically cancel at 7.00 P.M.
                 </div>
 
                 <button type="submit" class="btn btn-reserve" name="reserve">Reserve</button>
@@ -446,54 +513,62 @@ if (isset($_POST['reserve']))
     </main>
 
     <footer>
-        </footer>
-        <!-- Add this script at the bottom of your form or page -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const yesRadio = document.getElementById("cc_yes");
-    const noRadio = document.getElementById("cc_no");
-    const paymentDetails = document.getElementById("payment-details");
-    const cancelWarning = document.getElementById("cancel-warning");
+    </footer>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Payment section toggle logic
+            const yesRadio = document.getElementById("cc_yes");
+            const noRadio = document.getElementById("cc_no");
+            const paymentDetails = document.getElementById("payment-details");
+            const cancelWarning = document.getElementById("cancel-warning");
+            const errorNotification = document.getElementById("errorNotification");
+            const successNotification = document.getElementById("successNotification");
 
-    function togglePaymentAccess() {
-        if (yesRadio.checked) {
-        paymentDetails.style.display = "block";
-        cancelWarning.style.display = "none";
+            function togglePaymentAccess() {
+                if (yesRadio.checked) {
+                    paymentDetails.style.display = "block";
+                    cancelWarning.style.display = "none";
+                    document.getElementById("card_number").required = true;
+                    document.getElementById("expiry").required = true;
+                    document.getElementById("cvv").required = true;
+                } else if (noRadio.checked) {
+                    paymentDetails.style.display = "none";
+                    cancelWarning.style.display = "block";
+                    document.getElementById("card_number").required = false;
+                    document.getElementById("expiry").required = false;
+                    document.getElementById("cvv").required = false;
+                }
+            }
 
-        // Make payment inputs required when visible
-        document.getElementById("card_number").required = true;
-        document.getElementById("expiry").required = true;
-        document.getElementById("cvv").required = true;
-      } else if (noRadio.checked) {
-        paymentDetails.style.display = "none";
-        cancelWarning.style.display = "block";
+            // Initialize based on current selection
+            if (yesRadio && yesRadio.checked) {
+                paymentDetails.style.display = "block";
+                cancelWarning.style.display = "none";
+            } else if (noRadio && noRadio.checked) {
+                paymentDetails.style.display = "none";
+                cancelWarning.style.display = "block";
+            }
 
-        // Remove required attribute when hidden
-        document.getElementById("card_number").required = false;
-        document.getElementById("expiry").required = false;
-        document.getElementById("cvv").required = false;
-      } else {
-        paymentDetails.style.display = "none";
-        cancelWarning.style.display = "none";
+            if (yesRadio) yesRadio.addEventListener("change", togglePaymentAccess);
+            if (noRadio) noRadio.addEventListener("change", togglePaymentAccess);
 
-        document.getElementById("card_number").required = false;
-        document.getElementById("expiry").required = false;
-        document.getElementById("cvv").required = false;
-      }
-    }
+            // Show notifications
+            if(errorNotification) {
+                errorNotification.style.display = 'block';
+                setTimeout(() => { errorNotification.style.display = 'none'; }, 3500);
+            }
+            
+            if(successNotification) {
+                successNotification.style.display = 'block';
+                setTimeout(() => { successNotification.style.display = 'none'; }, 3500);
+            }
 
-    yesRadio.addEventListener("change", togglePaymentAccess);
-    noRadio.addEventListener("change", togglePaymentAccess);
-
-    if(errorNotification) 
-    {
-        errorNotification.style.display = 'block';
-        setTimeout(() => { errorNotification.style.display = 'none'; }, 3500);
-    }
-
-    // Initialize on load in case of pre-filled values
-    togglePaymentAccess();
-  });
-</script>
+            // Clear form if submitted successfully
+            <?php if($form_submitted): ?>
+                document.querySelector('form').reset();
+            <?php endif; ?>
+        });
+    </script>
 </body>
 </html>

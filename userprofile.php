@@ -2,19 +2,10 @@
 session_start();
 
 // Redirect to login if not authenticated
-if (!isset($_SESSION["email"]) && !isset($_SESSION["fullname"])) {
+if (!isset($_SESSION["email"]) && !isset($_SESSION["fullname"])) 
+{
     header("Location: signin.php");
     exit();
-}
-
-if(isset($_SESSION["Room_type"]) && isset($_SESSION["Room_No"])) {
-    $roomtype = $_SESSION["Room_type"];
-    $roomno = $_SESSION["Room_No"];
-} 
-else 
-{
-    $roomtype = "N/A";  // Default value if no room is set
-    $roomno = "N/A";     // Default value if no room is set
 }
 
 $servername = "localhost";
@@ -24,81 +15,101 @@ $dbname = "hotel_reservation_system";
 
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
-if($conn) {
+if($conn) 
+{
     $email = $_SESSION["email"];
     $user_query = "SELECT * FROM customer WHERE email='$email'";
     $user_result = mysqli_query($conn, $user_query);
     $user = mysqli_fetch_assoc($user_result);
-
-    // Get user reservations
-    $reservations_query = "SELECT * FROM reservations WHERE customer_email='$email' ORDER BY check_in_date DESC";
-    $reservations_result = mysqli_query($conn, $reservations_query);
-
-    // MY
     $customerid = $user["customer_id"];
-    $rooms_query = "SELECT * FROM rooms WHERE customer_id='$customerid'";
-    $rooms_result = mysqli_query($conn , $rooms_query);
 
-    $room_type = "N/A";  // Default value if no room is found
-    $capacity = 0;  // Default value if no room is found
-    if(mysqli_num_rows($rooms_result) > 0) {
-        $room_columns = mysqli_fetch_assoc($rooms_result);
-        $room_type = $room_columns["room_type"];
-        $capacity = $room_columns["capacity"];
-        $roomno = $room_columns["room_no"]; // Get room number from the query
+    // Initialize variables
+    $room_type = $roomno = $capacity = '';
 
-    }
-
-    if(empty($room_type) && empty($capacity))
+    // Get ALL user reservations (don't fetch here, just prepare the query)
+    $reservations_query = "SELECT * FROM reservations WHERE customer_email='$email' ORDER BY check_in_date DESC";
+    
+    // Handle form submissions first
+    if (isset($_POST['cancel_reservation'])) 
     {
-        echo "empty";
-    }
-
-    // Handle reservation cancellation
-    if (isset($_POST['cancel_reservation'])) {
         $reservation_id = $_POST['reservation_id'];
         $cancel_query = "DELETE FROM reservations WHERE reservation_id='$reservation_id' AND customer_email='$email'";
-        if (mysqli_query($conn, $cancel_query)) {
+        if (mysqli_query($conn, $cancel_query)) 
+        {
             $success_message = "Reservation cancelled successfully!";
-            // Refresh reservations
-            $reservations_result = mysqli_query($conn, $reservations_query);
-        } else {
+        } 
+        else 
+        {
             $error_message = "Error cancelling reservation: " . mysqli_error($conn);
         }
     }
 
-    // Handle reservation update
     if (isset($_POST['update_reservation'])) {
-        if($reservation_fetch["occupants"] == $capacity) {
-            $reservation_id = $_POST['reservation_id'];
-            $check_in = $_POST['check_in'];
-            $check_out = $_POST['check_out'];
-            $guests = $_POST['guests'];
-            $roomtype_updateform = $_POST["roomtype"];
-
+        // Get the specific reservation being updated
+        $reservation_id = $_POST['reservation_id'];
+        $check_in = $_POST['check_in'];
+        $check_out = $_POST['check_out'];
+        $guests = $_POST['guests'];
+        $roomtype_updateform = $_POST["roomtype"];
+    
+        // First validate the dates
+        if (strtotime($check_out) <= strtotime($check_in)) 
+        {
+            $error_message = "Check-out date must be after check-in date";
+        } 
+        else 
+        {
             $update_query = "UPDATE reservations SET 
                             check_in_date='$check_in', 
                             check_out_date='$check_out', 
                             occupants='$guests' 
                             WHERE reservation_id='$reservation_id' AND customer_email='$email'";
-
-            $update_rooms = "UPDATE rooms SET
-                            capacity='$guests'
-                            WHERE customer_id='$customerid'";
-
+    
+            if ($roomtype_updateform != $room_type) 
+            {
+                $update_rooms = "UPDATE rooms SET room_type='$roomtype_updateform', capacity='$guests' 
+                               WHERE customer_id='$customerid' AND room_no='$roomno'";
+                // $r2 = mysqli_query($conn, $update_rooms);
+            } 
+            // else 
+            // {
+            //     $r2 = true;
+            // }
+    
             $r1 = mysqli_query($conn, $update_query);
             $r2 = mysqli_query($conn, $update_rooms);
-
-            if ($r1 === TRUE && $r2 === TRUE) {
+    
+            if ($r1 === TRUE && $r2 === TRUE) 
+            {
                 $success_message = "Reservation updated successfully!";
-                // Refresh reservations
-                $reservations_result = mysqli_query($conn, $reservations_query);
-            } else {
+            } 
+            else 
+            {
                 $error_message = "Error updating reservation: " . mysqli_error($conn);
             }
         }
     }
-} else {
+
+    // Now execute the main reservations query
+    $reservations_result = mysqli_query($conn, $reservations_query);
+    
+    // Get room data (only if needed)
+    if(mysqli_num_rows($reservations_result) > 0) 
+    {
+        $rooms_query = "SELECT * FROM rooms WHERE customer_id='$customerid'";
+        $rooms_result = mysqli_query($conn, $rooms_query);
+        
+        if(mysqli_num_rows($rooms_result) > 0) 
+        {
+            $room_columns = mysqli_fetch_assoc($rooms_result);
+            $room_type = $room_columns["room_type"];
+            $capacity = $room_columns["capacity"];
+            $roomno = $room_columns["room_no"];
+        }
+    }
+} 
+else 
+{
     echo "Connection error!" . mysqli_connect_error($conn);
 }
 ?>

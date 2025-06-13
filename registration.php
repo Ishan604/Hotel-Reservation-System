@@ -2,8 +2,6 @@
 
 session_start(); // Start the session
 
-if (isset($_SESSION['location']))   
-{
     if(isset($_POST["create"])) 
     {
         $servername = "localhost"; 
@@ -63,7 +61,6 @@ if (isset($_SESSION['location']))
             }
         }
     }
-}
 ?>
 
 <!DOCTYPE html>

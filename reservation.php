@@ -2,7 +2,7 @@
 session_start();
 
 // Initialize all variables with default values
-$location = $checkIn = $checkOut = $roomtype = $roomno = $capacity = '';
+$location = $checkIn = $checkOut = $roomtype = $roomno = $capacity = $roomname = '';
 $adults = $children = $rooms = 0;
 $numNights = 0;
 $error_message = '';
@@ -21,7 +21,15 @@ if (isset($_SESSION['location']))
     $roomtype = $_SESSION['Room_type'];
     $roomno = $_SESSION['Room_No'];
     $capacity = $_SESSION['capacity'];
-    $_SESSION['roomName'] = $_SESSION['roomName'];
+}
+
+if(isset($_SESSION['Room_name']))
+{
+    $roomname = $_SESSION['Room_name'];
+} 
+else 
+{
+    $roomname = "empty"; // Default room name if not set
 }
 
 // Calculate total length of stay (number of nights)
@@ -167,10 +175,10 @@ if (isset($_POST['reserve']))
 }
 
 // Reset form submission flag when coming from another page
-if (!isset($_POST['reserve'])) {
+if (!isset($_POST['reserve'])) 
+{
     $_SESSION['form_submitted'] = false;
 }
-
 // Set default room details if not in session
 $roomAddress = "42, Humes Road, 80000 Galle, Sri Lanka";
 $roomRating = "9.1 Superb · 181 reviews"; 
@@ -249,7 +257,7 @@ $roomRating = "9.1 Superb · 181 reviews";
                     <span class="star-icon" style="color: orange">★</span>
                     <span class="star-icon" style="color: orange">★</span>
                 </div>
-                <h2><?php echo htmlspecialchars($_SESSION['roomName']); ?></h2>
+                <h2><?php echo $roomname ?></h2>
                 <p><?php echo htmlspecialchars($roomAddress); ?></p>
                 <div class="rating">
                     <span class="rating-score">9.1</span>

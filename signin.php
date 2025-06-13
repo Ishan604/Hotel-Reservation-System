@@ -1,71 +1,67 @@
 <?php
-
 session_start();
 
-if(isset($_SESSION["location"]))
+if(isset($_POST["signin"]))
 {
-    if(isset($_POST["signin"]))
+    $servername = "localhost"; 
+    $username = "root"; 
+    $password = ""; 
+    $dbname = "hotel_reservation_system"; 
+
+    $conn = mysqli_connect($servername, $username, $password, $dbname);
+
+    if($_SERVER["REQUEST_METHOD"] == "POST")
     {
-        $servername = "localhost"; 
-        $username = "root"; 
-        $password = ""; 
-        $dbname = "hotel_reservation_system"; 
+        $email = $_POST["email"];
+        $cpassword = $_POST["password"];
 
-        $conn = mysqli_connect($servername, $username, $password, $dbname);
-
-        if($_SERVER["REQUEST_METHOD"] == "POST")
+        if($conn)
         {
-            $email = $_POST["email"];
-            $cpassword = $_POST["password"];
-
-            if($conn)
+            if(!empty($email) && !empty($cpassword))
             {
-                if(!empty($email) && !empty($cpassword))
+                $get_email = "SELECT * FROM customer WHERE email='$email'";
+                $result = mysqli_query($conn, $get_email);
+
+                if($result == TRUE) 
                 {
-                    $get_email = "SELECT * FROM customer WHERE email='$email'";
-                    $result = mysqli_query($conn, $get_email);
+                    $value_set = mysqli_fetch_assoc($result);
 
-                    if($result == TRUE) 
+                    // Check if the query returned a valid user
+                    if($value_set)
                     {
-                        $value_set = mysqli_fetch_assoc($result);
-
-                        // Check if the query returned a valid user
-                        if($value_set)
+                        if(password_verify($cpassword, $value_set["Cuspassword"])) 
                         {
-                            if(password_verify($cpassword, $value_set["Cuspassword"])) 
-                            {
-                                $_SESSION["fullname"] = $value_set["Cusname"];
-                                $_SESSION["email"] = $value_set["email"];
-                                header("Location: userprofile.php");
-                            }
-                            else
-                            {
-                                $error_message = "Incorrect email or password!";
-                            }
+                            $_SESSION["fullname"] = $value_set["Cusname"];
+                            $_SESSION["email"] = $value_set["email"];
+                            header("Location: userprofile.php");
+                            exit();
                         }
                         else
                         {
-                            $error_message = "No user found with that email!";
+                            $error_message = "Incorrect email or password!";
                         }
                     }
                     else
                     {
-                        $error_message = "Error in Logging: " . mysqli_error($conn);
+                        $error_message = "No user found with that email!";
                     }
                 }
                 else
                 {
-                    $error_message = "Fileds can not be empty!";
+                    $error_message = "Error in Logging: " . mysqli_error($conn);
                 }
             }
             else
             {
-                $error_message = "Connection failed!";
+                $error_message = "Fields cannot be empty!";
             }
+        }
+        else
+        {
+            $error_message = "Connection failed!";
         }
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -163,11 +159,27 @@ if(isset($_SESSION["location"]))
 
     <script src="Scripts/signinform.js"></script>
     <script>
-        if(errorNotification) 
-        {
+        // Show error notification if it exists
+        document.addEventListener('DOMContentLoaded', function() {
+            var errorNotification = document.getElementById('errorNotification');
+            if(errorNotification) 
+            {
                 errorNotification.style.display = 'block';
-                setTimeout(() => { errorNotification.style.display = 'none'; }, 3500);
-        }
+                setTimeout(function() { 
+                    errorNotification.style.display = 'none'; 
+                }, 3500);
+            }
+            
+            // Password toggle functionality
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#password');
+            
+            togglePassword.addEventListener('click', function() {
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
+            });
+        });
     </script>
 </body>
 </html>

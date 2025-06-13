@@ -20,6 +20,7 @@ $dbname = "hotel_reservation_system";
 
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnreserve'])) 
 {
@@ -36,9 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['btnreserve']))
         {
             // Room is available, proceed with reservation
             $_SESSION['Room_type'] = $_POST['roomtype'];
-            $_SESSION['Room_No'] = $roomNo;
+            $_SESSION['Room_No'] = $_POST['roomno'];
             $_SESSION['selectApartment'] = $_POST['selectApartment'];
-
+            $_SESSION['Room_name'] = $_POST['roomname'];
+            
             $capcity = $adults + $children;
             $_SESSION["capacity"] = $capcity;
             header("Location: reservation.php");
@@ -295,7 +297,10 @@ if ($conn)
     <table class="room-info-table">
         <tr>
           <td><strong>Apartment Type</strong></td>
-          <td>Apartment with Terrace</td>
+          <td>
+          <input type="hidden" name="roomname" value="Apartment with Terrace">  
+          Apartment with Terrace
+          </td>
         </tr>
         <tr>
           <td><strong>Number of Guests</strong></td>
@@ -364,7 +369,10 @@ if ($conn)
     <table class="room-info-table">
         <tr>
           <td><strong>Apartment Type</strong></td>
-          <td>Apartment with Terrace</td>
+          <td>
+          <input type="hidden" name="roomname" value="Apartment with Terrace">  
+          Apartment with Terrace
+          </td>
         </tr>
         <tr>
           <td><strong>Number of Guests</strong></td>
@@ -430,7 +438,10 @@ if ($conn)
     <table class="room-info-table">
         <tr>
           <td><strong>Apartment Type</strong></td>
-          <td>Apartment with Terrace</td>
+          <td>
+          <input type="hidden" name="roomname" value="Apartment with Terrace">  
+          Apartment with Terrace
+          </td>
         </tr>
         <tr>
           <td><strong>Number of Guests</strong></td>

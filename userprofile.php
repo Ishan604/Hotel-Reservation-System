@@ -1,11 +1,18 @@
 <?php
 session_start();
 
+$roomno = '';
+
 // Redirect to login if not authenticated
 if (!isset($_SESSION["email"]) && !isset($_SESSION["fullname"])) 
 {
     header("Location: signin.php");
     exit();
+}
+else
+{
+    $roomno = $_SESSION['Room_No'];
+    // echo "<script>console.log('Room No: $roomno');</script>";
 }
 
 $servername = "localhost";
@@ -24,7 +31,7 @@ if($conn)
     $customerid = $user["customer_id"];
 
     // Initialize variables
-    $room_type = $roomno = $capacity = '';
+    $room_type = $capacity = '';
 
     // Get ALL user reservations (don't fetch here, just prepare the query)
     $reservations_query = "SELECT * FROM reservations WHERE customer_email='$email' ORDER BY check_in_date DESC";
@@ -33,9 +40,16 @@ if($conn)
     if (isset($_POST['cancel_reservation'])) 
     {
         $reservation_id = $_POST['reservation_id'];
+        // $room_no_to_update = $_POST['room_no']; // Assuming room_no is passed in the form
+        
+        // Cancel the reservation
         $cancel_query = "DELETE FROM reservations WHERE reservation_id='$reservation_id' AND customer_email='$email'";
         if (mysqli_query($conn, $cancel_query)) 
         {
+            // Update the room's availability to 1 (available)
+            $delete_room = "DELETE FROM rooms WHERE customer_id='$customerid' AND room_no='$roomno'";
+            mysqli_query($conn, $delete_room);
+
             $success_message = "Reservation cancelled successfully!";
         } 
         else 
@@ -69,12 +83,7 @@ if($conn)
             {
                 $update_rooms = "UPDATE rooms SET room_type='$roomtype_updateform', capacity='$guests' 
                                WHERE customer_id='$customerid' AND room_no='$roomno'";
-                // $r2 = mysqli_query($conn, $update_rooms);
             } 
-            // else 
-            // {
-            //     $r2 = true;
-            // }
     
             $r1 = mysqli_query($conn, $update_query);
             $r2 = mysqli_query($conn, $update_rooms);
@@ -113,6 +122,7 @@ else
     echo "Connection error!" . mysqli_connect_error($conn);
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

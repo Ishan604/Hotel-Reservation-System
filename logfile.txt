@@ -1,0 +1,10 @@
+2025-06-14 14:55:49 - Script started at 14:55
+2025-06-14 14:55:49 - Today's date is 2025-06-14
+2025-06-14 14:55:49 - Reservation with ID 42 has been deleted.
+2025-06-14 14:55:49 - Room with ID 35 has been deleted from the system.
+2025-06-14 14:55:50 - Message could not be sent. Mailer Error: Could not instantiate mail function.
+2025-06-14 14:55:50 - Script finished.
+2025-06-14 15:31:03 - Script started at 15:31
+2025-06-14 15:31:03 - Today's date is 2025-06-14
+2025-06-14 15:31:03 - No pending reservations without credit card details found for today.
+2025-06-14 15:31:03 - Script finished.

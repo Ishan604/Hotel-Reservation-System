@@ -223,6 +223,43 @@ $roomRating = "9.1 Superb · 181 reviews";
             from { opacity: 1; }
             to { opacity: 0; }
         }
+        .good-to-know ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+        .good-to-know li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 8px;
+        }
+
+        .good-to-know li::before {
+            content: "✓"; /* Unicode checkmark */
+            color: #4CAF50;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .apartment-features ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+        .apartment-features li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 8px;
+        }
+
+        .apartment-features li::before {
+            content: "✓"; /* Unicode checkmark */
+            color: #4CAF50;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>

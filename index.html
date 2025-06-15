@@ -4,30 +4,36 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Crown Stays - Home</title>
-  <link rel="stylesheet" href="Style_files/index_style.css" />
+  <link rel="stylesheet" href="Style_files/index_style.css?v=1.2" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 </head>
 <body>
   <!-- Navigation -->
-  <nav class="navbar">
+  <nav class="navbar animate__animated animate__fadeInDown">
     <div class="container nav-container">
       <div class="logo">
         <span>The</span><span class="highlight">Crown</span><span>Stays</span>
       </div>
       <ul class="nav-links">
         <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Services</a></li>
+        <li><a href="aboutus.html">About</a></li>
+        <li><a href="services.html">Services</a></li>
         <li><a href="#">Apartment Room</a></li>
         <li><a href="signin.php">Sign In</a></li>
         <li><a href="reservation.php">Log In</a></li>
       </ul>
+      <div class="mobile-menu-btn">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
     </div>
   </nav>
 
   <!-- Hero Section -->
   <section class="hero">
     <div class="container hero-container">
-      <div class="hero-text">
+      <div class="hero-text animate__animated animate__fadeInLeft">
         <small>Welcome to Vacation Rental</small>
         <h1>Rent an appartment <br />for your vacation</h1>
         <div class="hero-btns">
@@ -35,7 +41,7 @@
           <button class="btn secondary-btn">Contact Us</button>
         </div>
       </div>
-      <div class="reservation-form-wrapper">
+      <div class="reservation-form-wrapper animate__animated animate__fadeInRight">
         <form class="reservation-form" action="room_page.php" method="POST" id="reservationForm">
           <h3>Book your apartment</h3>
           <input type="text" name="location" placeholder="Location" required />
@@ -68,19 +74,19 @@
 
   <!-- Features Section -->
   <section class="features container">
-    <div class="feature-card">
+    <div class="feature-card animate__animated">
       <img src="img/features/about-p1.jpg" alt="Map Direction" />
       <h4>Map Direction</h4>
       <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
       <button class="btn primary-btn small-btn">Read More</button>
     </div>
-    <div class="feature-card">
+    <div class="feature-card animate__animated">
       <img src="img/features/about-p2.jpg" alt="Accommodation Services" />
       <h4>Accomodation Services</h4>
       <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
       <button class="btn primary-btn small-btn">Read More</button>
     </div>
-    <div class="feature-card">
+    <div class="feature-card animate__animated">
       <img src="img/features/about-p3.jpg" alt="Great Experience" />
       <h4>Great Experience</h4>
       <p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic.</p>
@@ -90,9 +96,9 @@
 
   <!-- Apartment Room Section -->
   <section class="apartment-room container">
-    <h2>Apartment Room</h2>
+    <h2 class="animate__animated">Apartment Room</h2>
     <div class="room-cards">
-      <div class="room-card">
+      <div class="room-card animate__animated">
         <img src="img/rooms/room-2.jpg" alt="Suite Room" />
         <div class="room-info">
           <div class="stars">★★★★★</div>
@@ -104,7 +110,7 @@
           <button class="btn secondary-btn small-btn">View Room Details</button>
         </div>
       </div>
-      <div class="room-card">
+      <div class="room-card animate__animated">
         <img src="img/rooms/room-3.jpg" alt="Standard Room" />
         <div class="room-info">
           <div class="stars">★★★★★</div>
@@ -121,21 +127,21 @@
 
   <!-- Happy Clients Section -->
   <section class="happy-clients container">
-    <h2>Happy Clients & Feedbacks</h2>
+    <h2 class="animate__animated">Happy Clients & Feedbacks</h2>
     <div class="client-cards">
-      <div class="client-card">
+      <div class="client-card animate__animated">
         <img src="img/avatar/avatar-1.jpg" alt="Mark Huff" />
         <p>“Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.”</p>
         <h4>Mark Huff</h4>
         <small>Businesswoman</small>
       </div>
-      <div class="client-card">
+      <div class="client-card animate__animated">
         <img src="img/avatar/avatar-2.jpg" alt="Rodel Golez" />
         <p>“Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.”</p>
         <h4>Rodel Golez</h4>
         <small>Businesswoman</small>
       </div>
-      <div class="client-card">
+      <div class="client-card animate__animated">
         <img src="img/avatar/avatar-3.jpg" alt="Ken Bosh" />
         <p>“Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.”</p>
         <h4>Ken Bosh</h4>
@@ -146,10 +152,10 @@
 
   <!-- What We Offer Section -->
   <section class="what-we-offer container">
-    <div class="offer-left">
+    <div class="offer-left animate__animated">
       <img src="img/side_image.jpg" alt="Family moving" />
     </div>
-    <div class="offer-right">
+    <div class="offer-right animate__animated">
       <h2>What we offer</h2>
       <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
       <div class="offer-list">
@@ -217,14 +223,11 @@
 
   <!-- Ready to get started -->
   <section class="ready-to-start">
-    <div class="container ready-container">
+    <div class="container ready-container animate__animated">
       <h2>Ready to get started</h2>
-      <p>It’s safe to book online with us! Get your dream stay in clicks or drop us a line with your questions.</p>
+      <p>It's safe to book online with us! Get your dream stay in clicks or drop us a line with your questions.</p>
       <div class="btn-group">
-        <button 
-        onclick="window.location.href='booking.html'"
-        class="btn primary-btn">Book Now
-        </button>
+        <button onclick="window.location.href='booking.html'" class="btn primary-btn">Book Now</button>
         <button class="btn secondary-btn">Contact Us</button>
       </div>
     </div>
@@ -232,18 +235,18 @@
 
   <!-- Blog Section -->
   <section class="blog container">
-    <h2>Latest news from our blog</h2>
+    <h2 class="animate__animated">Latest news from our blog</h2>
     <small class="subtitle">NEWS & BLOG</small>
     <div class="blog-cards">
-      <div class="blog-card">
+      <div class="blog-card animate__animated">
         <img src="img/blog-4.jpg" alt="Luxury Chalet in the Alps" />
         <p>Work Hard, Party Hard in a Luxury Chalet in the Alps</p>
       </div>
-      <div class="blog-card">
+      <div class="blog-card animate__animated">
         <img src="img/blog-8.jpg" alt="Luxury Chalet in the Alps" />
         <p>Work Hard, Party Hard in a Luxury Chalet in the Alps</p>
       </div>
-      <div class="blog-card">
+      <div class="blog-card animate__animated">
         <img src="img/blog-6.jpg" alt="Luxury Chalet in the Alps" />
         <p>Work Hard, Party Hard in a Luxury Chalet in the Alps</p>
       </div>
@@ -253,12 +256,12 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container footer-container">
-      <div class="footer-col">
+      <div class="footer-col animate__animated">
         <h3>Vacation Rental</h3>
         <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
         <a href="#" class="read-more">Read more &rarr;</a>
       </div>
-      <div class="footer-col">
+      <div class="footer-col animate__animated">
         <h3>Services</h3>
         <ul>
           <li><a href="#">Map Direction</a></li>
@@ -267,7 +270,7 @@
           <li><a href="#">Perfect central location</a></li>
         </ul>
       </div>
-      <div class="footer-col">
+      <div class="footer-col animate__animated">
         <h3>Tag cloud</h3>
         <div class="tag-cloud">
           <span>APARTMENT</span>
@@ -280,7 +283,7 @@
           <span>DRINKS</span>
         </div>
       </div>
-      <div class="footer-col">
+      <div class="footer-col animate__animated">
         <h3>Subscribe</h3>
         <form class="subscribe-form" action="#" method="POST">
           <input type="email" placeholder="Enter email address" required />

@@ -8,3 +8,9 @@
 2025-06-14 15:31:03 - Today's date is 2025-06-14
 2025-06-14 15:31:03 - No pending reservations without credit card details found for today.
 2025-06-14 15:31:03 - Script finished.
+2025-06-15 15:30:01 - Script started at 15:30
+2025-06-15 15:30:01 - Today's date is 2025-06-15
+2025-06-15 15:30:01 - Reservation with ID 44 has been deleted.
+2025-06-15 15:30:01 - Room with ID 37 has been deleted from the system.
+2025-06-15 15:30:06 - Cancellation email has been sent to durshanidulakshani0605@gmail.com successfully.
+2025-06-15 15:30:06 - Script finished.

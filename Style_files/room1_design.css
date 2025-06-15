@@ -217,6 +217,39 @@ h2 {
     height: auto;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    cursor: pointer;
+}
+
+/* Hover Effects */
+.photo-gallery .photo-grid img:hover {
+    transform: scale(1.03); /* Slight zoom effect */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+    z-index: 1; /* Ensures the hovered image appears above others */
+    filter: brightness(1.05); /* Slight brightness increase */
+}
+
+/* Optional: Add a smooth overlay effect */
+.photo-gallery .photo-grid .photo-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.photo-gallery .photo-grid .photo-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.photo-gallery .photo-grid .photo-item:hover::after {
+    opacity: 1;
 }
 
 /* About This Property Section */

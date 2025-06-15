@@ -84,7 +84,7 @@ if ($conn)
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Room Search Results | The Crown Stays</title>
-  <link rel="stylesheet" href="Style_files/room1_design.css">
+  <link rel="stylesheet" href="Style_files/room1_design.css?v=1.2">
   <style>
     .reserve-btn {
       background-color: #007bff;
@@ -198,9 +198,8 @@ if ($conn)
         <img src="img/galle_room1/room4.jpg" alt="Room Image" />
         <img src="img/galle_room1/room5.jpg" alt="Room Image" />
         <img src="img/galle_room1/room6.jpg" alt="Room Image" />
-        <img src="img/galle_room1/room7.jpg" alt="Room Image" />
-        <img src="img/galle_room1/room8.jpg" alt="Room Image" />
-        <!-- Add more images here as needed -->
+        <img src="img/galle_room1/room_7.jpg" alt="Room Image" />
+        <img src="img/galle_room1/room_8.jpg" alt="Room Image" />
       </div>
     </div>
 
@@ -457,7 +456,7 @@ if ($conn)
         <tr>
           <td><strong>Room Number</strong></td>
           <td>
-            <input type="hidden" name="roomno" value="Room 02">
+            <input type="hidden" name="roomno" value="Room 03">
             Room 03
           </td>
         </tr>
